@@ -2,11 +2,17 @@ from django.core import paginator
 from django.shortcuts import render, get_object_or_404
 from .models import Post, Comment
 from django.views.generic import ListView
-from .forms import EmailPostForm, CommentForm
+from .forms import EmailPostForm, CommentForm 
 from django.core.mail import send_mail
 from taggit.models import Tag
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Count
+from django.http import HttpResponseRedirect
+
+from .forms import (
+    PostForm
+)
+
 
 def post_share(request, post_id):  #it retrieve post by id
     post = get_object_or_404(Post, id=post_id, status='published')
@@ -85,6 +91,23 @@ class PostListView(ListView):
     template_name = 'blog/post/list.html'
 
     
+
+#create new post
+def create_post(request):
+    form = PostForm()
+    if request.method == "POST":
+        form = PostForm(request.POST or None, request.FILES or None)
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.author = request.user
+            instance.save()
+            form.save_m2m()
+            return HttpResponseRedirect(instance.get_absolute_url())
+    context = {
+    'form': form
+    }
+
+    return render(request, "blog/post/post_form.html", context)
 
 
 
