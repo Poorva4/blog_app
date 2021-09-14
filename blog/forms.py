@@ -22,7 +22,7 @@ class PostForm(forms.ModelForm):
 
         }
 
-        def __init__(self, *args, **kwargs):
-            super(PostForm, self).__init__(*args, *kwargs)
-            for fields in(self.fields['title'], self.fields['body'], self.fields['status']):
-                fields.widgets.attrs.update({'class': 'form-control'})
+    
+
+
+            
